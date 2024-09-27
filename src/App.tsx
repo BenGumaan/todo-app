@@ -47,20 +47,20 @@ const App: React.FC = () => {
       alert('Invalid task data');
       return;  // Exit the function if the task data is invalid
     }
-    setTasks([...tasks, newTask]);
+    setTasks(tasks => [...tasks, newTask]);
   };
 
   // Function to update the task status
   const updateTaskStatus = (taskId: number, completed: boolean) => {
     // Update task status using the ternary operator and the spread operator in the map method 
-    setTasks(tasks.map((task: Task) => 
+    setTasks(tasks => tasks.map((task: Task) => 
       task.id === taskId ? { ...task, completed } : task
     ));
   };
 
   // Function to delete a task
   const deleteTask = (taskId: number) => {
-    setTasks(tasks.filter((task: Task) => task.id !== taskId));
+    setTasks(tasks => tasks.filter((task: Task) => task.id !== taskId));
   };
 
   // Update local storage when tasks change
