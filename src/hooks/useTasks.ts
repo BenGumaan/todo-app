@@ -23,6 +23,7 @@ const useTasks = (initialTasks: Task[]) => {
   // Memoized the getStoredTasks function
   const memoizedStoredTasks = useMemo(() => getStoredTasks(), []);
   const [tasks, setTasks] = useState<Task[]>(memoizedStoredTasks.length > 0 ? memoizedStoredTasks : initialTasks); // Initialize tasks with stored tasks or sample tasks if no tasks are stored 
+  const [sortCriteria, setSortCriteria] = useState<string>('title'); // Default sorting by title
 
   // Function to add a new task
   const addTask = useCallback((taskTitle: string) => {
@@ -59,6 +60,20 @@ const useTasks = (initialTasks: Task[]) => {
     }
   }, []);
 
+  const sortedTasks = useMemo(() => {
+    return [...tasks].sort((a, b) => {
+      if (sortCriteria === 'title') {
+        return a.title.localeCompare(b.title);
+      } else if (sortCriteria === 'completed') {
+        return Number(a.completed) - Number(b.completed);
+      } else if (sortCriteria === 'id') {
+        return a.id - b.id;
+      }
+      return 0;
+    });
+  },  [tasks, sortCriteria]);
+
+
   // Update local storage when tasks change
   useEffect(() => {
     if (tasks.length > 0) {
@@ -68,7 +83,7 @@ const useTasks = (initialTasks: Task[]) => {
     }
   }, [tasks]);
 
-  return { tasks, addTask, updateTaskStatus, deleteTask, editTask };
+  return { tasks: sortedTasks, addTask, updateTaskStatus, deleteTask, editTask, setSortCriteria };
 };
 
 export default useTasks;
