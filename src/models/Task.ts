@@ -1,5 +1,5 @@
 export interface Task {
-    // Define the properties of the Task interface here
+    // Properties of a task object in the app
     id: number;
     title: string;
     completed: boolean;

@@ -1,16 +1,41 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Task } from "../models/Task";
 
 interface TaskItemProps {
     task: Task;
     updateTaskStatus: (taskId: number, completed: boolean) => void;
     deleteTask: (taskId: number) => void;
+    editTask: (taskId: number, taskTitle: string) => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, updateTaskStatus, deleteTask }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task, updateTaskStatus, deleteTask, editTask }) => {
 
-  const handleStatusChange = (taskId: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateTaskStatus(taskId, e.target.checked);
+  const [toggleEdit, setToggleEdit] = React.useState(false);
+  const [newTaskTitle, setNewTaskTitle] = React.useState(task.title);
+
+  // Function to handle delete task
+  const handleDelete = useCallback((taskId: number) => {  
+    if (window.confirm('Are you sure you want to delete this task?')) {
+      deleteTask(taskId);
+    }
+  }, [deleteTask]);
+  
+  // Function to handle edit task
+  const handleEdit = useCallback((taskId: number) => { 
+    setToggleEdit(toggleEdit => !toggleEdit);
+    if (toggleEdit) {
+      editTask(taskId, newTaskTitle);
+    }
+  }, [editTask, newTaskTitle, toggleEdit]);
+
+  // Function to handle task status change
+  const handleStatusChange = useCallback((taskId: number, completed: boolean) => {
+    updateTaskStatus(taskId, completed);
+  }, [updateTaskStatus]);
+
+  // Function to handle task title change
+  const handleTaskTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTaskTitle(e.target.value);
   };
 
   return (
@@ -18,13 +43,20 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, updateTaskStatus, deleteTask 
           <input 
             type="checkbox" 
             checked={task.completed}
-            onChange={handleStatusChange(task.id)}
+            onChange={(e) => handleStatusChange(task.id, e.target.checked)}
+            required
           />
-          <span>{task.title}</span>
-          <button onClick={() => deleteTask(task.id)}>Delete</button>
+          <input 
+            type="text"
+            value={newTaskTitle}
+            onChange={handleTaskTitleChange} 
+            disabled={!toggleEdit} 
+          />
+          <button onClick={() => handleDelete(task.id)}>Delete</button>
+          <button onClick={() => handleEdit(task.id)}>{toggleEdit ? 'Save' : 'Edit'}</button>
       </div>
   );
 
 }
 
-export default TaskItem;
+export default React.memo(TaskItem);

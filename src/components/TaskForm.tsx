@@ -1,6 +1,4 @@
-// TaskForm.tsx
-import React, { useEffect, useState } from 'react';
-// import { Task } from '../models/Task';
+import React, { useState } from 'react';
 
 interface TaskFormProps {
     addTask: (taskTitle: string) => void;
@@ -15,13 +13,14 @@ const TaskForm: React.FC<TaskFormProps> = ({ addTask }) => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Handle task submission logic here
-        addTask(taskTitle);
-        console.log('Task submitted:', taskTitle);
-        // Optionally, reset the form
-        setTaskTitle('');
+        if (taskTitle.trim()){
+          addTask(taskTitle);
+          setTaskTitle('');
+        } else {
+          alert('Please enter a task title');
+        }
     };
-    
+
     return (
       <form onSubmit={handleSubmit}>
         <input 
@@ -35,4 +34,4 @@ const TaskForm: React.FC<TaskFormProps> = ({ addTask }) => {
     );
 };
   
-export default TaskForm;
+export default React.memo(TaskForm);
