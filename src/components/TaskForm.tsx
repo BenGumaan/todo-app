@@ -1,13 +1,12 @@
 // TaskForm.tsx
-import React, { useState } from 'react';
-import { Task } from '../models/Task';
+import React, { useEffect, useState } from 'react';
+// import { Task } from '../models/Task';
 
 interface TaskFormProps {
     addTask: (taskTitle: string) => void;
 };
 
 const TaskForm: React.FC<TaskFormProps> = ({ addTask }) => {
-    // component code
     const [taskTitle, setTaskTitle] = useState<string>('');
     
     const handleTaskTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,7 +21,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ addTask }) => {
         // Optionally, reset the form
         setTaskTitle('');
     };
-
+    
     return (
       <form onSubmit={handleSubmit}>
         <input 
