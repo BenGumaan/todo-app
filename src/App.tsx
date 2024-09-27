@@ -13,7 +13,12 @@ const App: React.FC = () => {
     { id: 3, title: 'Task 3', completed: false },
   ];
 
-  const { tasks, addTask, updateTaskStatus, deleteTask, editTask } = useTasks(sampleTasks);
+  const { tasks, addTask, updateTaskStatus, deleteTask, editTask, setSortCriteria } = useTasks(sampleTasks);
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortCriteria(e.target.value);
+  }
+ 
 
   return (
     <div className='App'>
@@ -23,6 +28,14 @@ const App: React.FC = () => {
         <main>
             <h2>Tasks</h2>
             <TaskForm addTask={addTask}/>
+            <div>
+              <label htmlFor="sort">Sort by: </label>
+              <select id="sort" onChange={handleSortChange}>
+                <option value="title">Title</option>
+                <option value="completed">Completed</option>
+                <option value="id">ID</option>
+              </select>
+            </div>
             <TaskList 
               tasks={tasks} 
               updateTaskStatus={updateTaskStatus} 
