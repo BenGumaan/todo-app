@@ -13,12 +13,15 @@ const App: React.FC = () => {
     { id: 3, title: 'Task 3', completed: false },
   ];
 
-  const { tasks, addTask, updateTaskStatus, deleteTask, editTask, setSortCriteria } = useTasks(sampleTasks);
+  const { tasks, addTask, updateTaskStatus, deleteTask, editTask, setSortCriteria, setSearchQuery } = useTasks(sampleTasks);
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortCriteria(e.target.value);
   }
- 
+  
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  }
 
   return (
     <div className='App'>
@@ -36,6 +39,16 @@ const App: React.FC = () => {
                 <option value="id">ID</option>
               </select>
             </div>
+            <div>
+              <label htmlFor="sort">Search: </label>
+              <input 
+                type="text" 
+                id="search"
+                placeholder="Search tasks..."
+                onChange={handleSearchChange} 
+              />
+            </div>
+            <h3>Task List</h3>
             <TaskList 
               tasks={tasks} 
               updateTaskStatus={updateTaskStatus} 
