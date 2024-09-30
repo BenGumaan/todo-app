@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Task } from "../models/Task";
 
 interface TaskItemProps {
@@ -12,6 +12,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, updateTaskStatus, deleteTask,
 
   const [toggleEdit, setToggleEdit] = React.useState(false);
   const [newTaskTitle, setNewTaskTitle] = React.useState(task.title);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Function to handle delete task
   const handleDelete = useCallback((taskId: number) => {  
@@ -38,6 +39,12 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, updateTaskStatus, deleteTask,
     setNewTaskTitle(e.target.value);
   };
 
+  useEffect(() => {
+    if (toggleEdit && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [toggleEdit]);
+
   return (
       <div className={`task-item ${task.completed ? 'completed' : ''}`}>
           <input 
@@ -50,7 +57,8 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, updateTaskStatus, deleteTask,
             type="text"
             value={newTaskTitle}
             onChange={handleTaskTitleChange} 
-            disabled={!toggleEdit} 
+            disabled={!toggleEdit}
+            ref={inputRef}
           />
           <button onClick={() => handleDelete(task.id)}>Delete</button>
           <button onClick={() => handleEdit(task.id)}>{toggleEdit ? 'Save' : 'Edit'}</button>
