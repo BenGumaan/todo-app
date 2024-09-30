@@ -25,6 +25,8 @@ const useTasks = (initialTasks: Task[]) => {
   const [tasks, setTasks] = useState<Task[]>(memoizedStoredTasks.length > 0 ? memoizedStoredTasks : initialTasks); // Initialize tasks with stored tasks or sample tasks if no tasks are stored 
   const [sortCriteria, setSortCriteria] = useState<string>('title'); // Default sorting by title
   const [searchQuery, setSearchQuery] = useState<string>(''); // Search query state
+  const [currentPage, setCurrentPage] = useState<number>(1); // Current page state
+  const [tasksPerPage, setTasksPerPage] = useState<number>(5); // Number of tasks per page
 
   // Function to add a new task
   const addTask = useCallback((taskTitle: string) => {
@@ -76,6 +78,13 @@ const useTasks = (initialTasks: Task[]) => {
     });
   },  [tasks, sortCriteria, searchQuery]);
   
+  // Paginate tasks
+  const paginatedTasks = useMemo(() => {
+    const startIndex = (currentPage - 1) * tasksPerPage;
+    const endIndex = startIndex + tasksPerPage;
+    return filteredAndSortedTasks.slice(startIndex, endIndex); // This returns the tasks for the current page
+  }, [filteredAndSortedTasks, currentPage, tasksPerPage]);
+
   // Update local storage when tasks change
   useEffect(() => {
     if (tasks.length > 0) {
@@ -85,7 +94,20 @@ const useTasks = (initialTasks: Task[]) => {
     }
   }, [tasks]);
 
-  return { tasks: filteredAndSortedTasks, addTask, updateTaskStatus, deleteTask, editTask, setSortCriteria, setSearchQuery };
+  return { 
+    tasks: paginatedTasks, 
+    addTask, 
+    updateTaskStatus, 
+    deleteTask, 
+    editTask, 
+    setSortCriteria, 
+    setSearchQuery,
+    currentPage,
+    setCurrentPage,
+    tasksPerPage,
+    setTasksPerPage,
+    totalTasks: filteredAndSortedTasks.length,
+  };
 };
 
 export default useTasks;
