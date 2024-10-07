@@ -25,8 +25,6 @@ const useTasks = (initialTasks: Task[]) => {
   const [tasks, setTasks] = useState<Task[]>(memoizedStoredTasks.length > 0 ? memoizedStoredTasks : initialTasks); // Initialize tasks with stored tasks or sample tasks if no tasks are stored 
   const [sortCriteria, setSortCriteria] = useState<string>('title'); // Default sorting by title
   const [searchQuery, setSearchQuery] = useState<string>(''); // Search query state
-  const [currentPage, setCurrentPage] = useState<number>(1); // Current page state
-  const [tasksPerPage, setTasksPerPage] = useState<number>(5); // Number of tasks per page
 
   // Function to add a new task
   const addTask = useCallback((taskTitle: string) => {
@@ -78,12 +76,14 @@ const useTasks = (initialTasks: Task[]) => {
     });
   },  [tasks, sortCriteria, searchQuery]);
   
-  // Paginate tasks
-  const paginatedTasks = useMemo(() => {
-    const startIndex = (currentPage - 1) * tasksPerPage;
-    const endIndex = startIndex + tasksPerPage;
-    return filteredAndSortedTasks.slice(startIndex, endIndex); // This returns the tasks for the current page
-  }, [filteredAndSortedTasks, currentPage, tasksPerPage]);
+  // Function to reorder tasks
+  const reorderTasks = useCallback((startIndex: number, endIndex: number) => {
+    const result = Array.from(tasks); // Use the original tasks array
+    const [removed] = result.splice(startIndex, 1); // Remove the task from the start index
+    result.splice(endIndex, 0, removed); // Insert it at the new index     
+    setTasks(result); // Update the tasks state
+    localStorage.setItem('tasks', JSON.stringify(result)); // Persist reordered tasks to local storage
+  }, [tasks]);
 
   // Update local storage when tasks change
   useEffect(() => {
@@ -95,17 +95,14 @@ const useTasks = (initialTasks: Task[]) => {
   }, [tasks]);
 
   return { 
-    tasks: paginatedTasks, 
+    tasks, 
     addTask, 
     updateTaskStatus, 
     deleteTask, 
-    editTask, 
+    editTask,
+    reorderTasks, // Add reorderTasks to the returned object
     setSortCriteria, 
     setSearchQuery,
-    currentPage,
-    setCurrentPage,
-    tasksPerPage,
-    setTasksPerPage,
     totalTasks: filteredAndSortedTasks.length,
   };
 };

@@ -17,13 +17,10 @@ const App: React.FC = () => {
           addTask, 
           updateTaskStatus, 
           deleteTask, 
-          editTask, 
+          editTask,
+          reorderTasks,
           setSortCriteria, 
-          setSearchQuery, 
-          currentPage, 
-          setCurrentPage,
-          tasksPerPage,
-          setTasksPerPage,
+          setSearchQuery,
           totalTasks 
   } = useTasks(sampleTasks);
 
@@ -34,12 +31,6 @@ const App: React.FC = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   }
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  }
-
-  const totalPages = Math.ceil(totalTasks / tasksPerPage);
 
   return (
     <div className='App'>
@@ -67,38 +58,13 @@ const App: React.FC = () => {
               />
             </div>
             <h3>Task List ({totalTasks})</h3>
-            <div>
-              <label htmlFor="taskPerPage">Show: </label>
-              <select id="taskPerPage" onChange={(e) => setTasksPerPage(parseInt(e.target.value))}>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-              </select>
-              <span> tasks per page</span>
-            </div>
-            <div>
-              <span>Page: {currentPage} of {totalPages}</span><br />
-            </div>
             <TaskList 
               tasks={tasks} 
               updateTaskStatus={updateTaskStatus} 
               deleteTask={deleteTask}
               editTask={editTask}
+              reorderTasks={reorderTasks}
             />
-            { totalPages > 0 ? 
-              <div className="pagination">
-                {Array.from({ length: totalPages }, (_, index) => (
-                  <button 
-                    key={index + 1} 
-                    onClick={() => handlePageChange(index + 1)} 
-                    disabled={currentPage === index + 1}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
-              </div> :
-              <span>No tasks found</span>
-            }
         </main>
     </div>
   );
