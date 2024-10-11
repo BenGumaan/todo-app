@@ -23,15 +23,25 @@ const useTasks = (initialTasks: Task[]) => {
   // Memoized the getStoredTasks function
   const memoizedStoredTasks = useMemo(() => getStoredTasks(), []);
   const [tasks, setTasks] = useState<Task[]>(memoizedStoredTasks.length > 0 ? memoizedStoredTasks : initialTasks); // Initialize tasks with stored tasks or sample tasks if no tasks are stored 
-  const [sortCriteria, setSortCriteria] = useState<string>('title'); // Default sorting by title
+  const [sortCriteria, setSortCriteria] = useState<string>('custom'); // Default sorting by title
   const [searchQuery, setSearchQuery] = useState<string>(''); // Search query state
+  const [category, setCategory] = useState<string>('all'); // Search query state
+
+  // Add manual order field if it doesn't exist in tasks
+  useEffect(() => {
+    setTasks(tasks => tasks.map((task, index) => ({ ...task, manualOrder: task.manualOrder ?? index })));
+  }, []);
 
   // Function to add a new task
-  const addTask = useCallback((taskTitle: string) => {
+  const addTask = useCallback((taskTitle: string, category: string) => {
+    console.log("category:", category);
+    
     const newTask: Task = {
       id: Math.floor(Math.random() * 1000),
       title: taskTitle,
       completed: false,
+      category,
+      manualOrder: tasks.length,  // Initialize new tasks at the end of the current order
     };
     if (!validateTask(newTask)) {
       alert('Invalid task data');
@@ -62,6 +72,16 @@ const useTasks = (initialTasks: Task[]) => {
   }, []);
 
   // Filter tasks based on search query and sort criteria
+  const filterByCategory = useMemo(() => {
+    return tasks.filter(task => {
+      if (category === 'all') {
+        return true;
+      }
+      return task.category === category;
+    });
+  },  [tasks, category, searchQuery]);
+  
+  // Filter tasks based on search query and sort criteria
   const filteredAndSortedTasks = useMemo(() => {
     const filteredTasks = tasks.filter((task: Task) => task.title.toLowerCase().includes(searchQuery.toLowerCase()));
     return filteredTasks.sort((a, b) => {
@@ -72,7 +92,9 @@ const useTasks = (initialTasks: Task[]) => {
       } else if (sortCriteria === 'id') {
         return a.id - b.id;
       }
-      return 0;
+      // Sort by manual order if no criteria is selected
+      // Default sort by manual order
+      return a.manualOrder - b.manualOrder;
     });
   },  [tasks, sortCriteria, searchQuery]);
   
@@ -81,8 +103,10 @@ const useTasks = (initialTasks: Task[]) => {
     const result = Array.from(tasks); // Use the original tasks array
     const [removed] = result.splice(startIndex, 1); // Remove the task from the start index
     result.splice(endIndex, 0, removed); // Insert it at the new index     
-    setTasks(result); // Update the tasks state
-    localStorage.setItem('tasks', JSON.stringify(result)); // Persist reordered tasks to local storage
+    
+    // Update manualOrder for each task
+    const updatedTasks = result.map((task, index) => ({...task, manualOrder: index}));
+    setTasks(updatedTasks); // Update the tasks state
   }, [tasks]);
 
   // Update local storage when tasks change
@@ -95,14 +119,15 @@ const useTasks = (initialTasks: Task[]) => {
   }, [tasks]);
 
   return { 
-    tasks, 
+    tasks: filterByCategory, 
     addTask, 
     updateTaskStatus, 
     deleteTask, 
     editTask,
-    reorderTasks, // Add reorderTasks to the returned object
+    reorderTasks,
     setSortCriteria, 
     setSearchQuery,
+    setCategory,
     totalTasks: filteredAndSortedTasks.length,
   };
 };
