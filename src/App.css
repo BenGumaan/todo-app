@@ -1,0 +1,86 @@
+.filter-list {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+    margin: 1em 0;
+    list-style: none;
+  }
+  
+  .filter-list button {
+    padding: 0.1em 1em;
+    font-size: 1em;
+  }
+  
+  .filter-list button.active {
+    background-color: #535bf2;
+    color: white;
+  }
+  
+  /* .todo-list {
+    display: grid;
+    gap: 1em;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    list-style: none;
+    padding: 0;
+  }
+  
+  .todo-item {
+    background-color: #f6f6f6;
+    border-radius: 8px;
+    padding: 1em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .todo-item h3 {
+    margin: 0;
+    font-size: 1.2em;
+  }
+  
+  .todo-item button {
+    background-color: #ff6e6e;
+    border: none;
+    color: white;
+    padding: 0.5em 1em;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .todo-item button:hover {
+    background-color: #ff4f4f;
+  }
+  
+  .todo-item button:active {
+    background-color: #ff3333;
+  }
+  
+  .todo-item p {
+    margin: 0;
+    color: #888;
+  }
+  
+  .todo-item.done {
+    background-color: #c6f6c6;
+  }
+  
+  .todo-item.done button {
+    background-color: #6eff6e;
+  }
+  
+  .todo-item.done button:hover {
+    background-color: #4fff4f;
+  }
+  
+  .todo-item.done button:active {
+    background-color: #33ff33;
+  }
+  
+  .todo-item.done p {
+    color: #6e6e6e;
+  }
+  
+  .todo-item.done h3 {
+    text-decoration: line-through;
+    color: #6e6e6e;
+} */
